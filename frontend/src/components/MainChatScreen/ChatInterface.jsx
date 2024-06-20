@@ -12,6 +12,7 @@ import {
   SliderThumb,
   Tooltip,
   Text,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
 import Message from "../MessageCard/Message"; // Ensure correct import path
@@ -67,6 +68,8 @@ const ChatInterface = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const sliderPosition = useBreakpointValue({ base: "column", md: "row" });
+
   return (
     <Flex
       flex="1"
@@ -103,69 +106,70 @@ const ChatInterface = () => {
         ))}
         <div ref={bottomRef} />
       </VStack>
-      <Flex mt={4} alignItems="center" zIndex="1">
-        <IconButton
-          icon={<AttachmentIcon />}
-          onClick={() => fileInputRef.current.click()}
-          mr={2}
-        />
-        <input
-          type="file"
-          ref={fileInputRef}
-          hidden
-          onChange={handleMediaSend}
-        />
-        <Flex direction="column" alignItems="center" mr={2}>
-          <Flex justify="space-between" width="100%">
-            {moodEmojis.map((emoji, index) => (
-              <Box key={index} textAlign="center" width="20%">
-                <Text>{emoji}</Text>
-              </Box>
-            ))}
-          </Flex>
-          <Tooltip
-            label={moodEmojis[Math.floor(mood / 20)]}
-            isOpen={showTooltip}
-            placement="top"
-          >
-            <Slider
-              defaultValue={50}
-              min={0}
-              max={100}
-              step={1}
-              onChange={(val) => setMood(val)}
-              onChangeStart={() => setShowTooltip(true)}
-              onChangeEnd={() => setShowTooltip(false)}
-              width="200px"
-              sx={{
-                ".chakra-slider__track": {
-                  background: moodGradient,
-                  height: "8px", // Ensure the track is visually appealing
-                },
-                ".chakra-slider__thumb": {
-                  bg: "white",
-                  borderColor: "gray.300",
-                },
-              }}
-            >
-              <SliderTrack>
-                <SliderFilledTrack bg="transparent" />
-              </SliderTrack>
-              <SliderThumb boxSize={6} />
-            </Slider>
-          </Tooltip>
-        </Flex>
-        <Input
-          placeholder="Type your message here..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(event) => (event.key === "Enter" ? sendMessage() : null)}
-          flexGrow={1}
-        />
-        <Button ml={2} colorScheme="pink" onClick={sendMessage}>
-          Send
-        </Button>
-      </Flex>
+      <Flex mt={4} alignItems="center" zIndex="1" direction="column">
+  <Flex justify="space-between" width="100%">
+    {moodEmojis.map((emoji, index) => (
+      <Box key={index} textAlign="center" width="20%">
+        <Text>{emoji}</Text>
+      </Box>
+    ))}
+  </Flex>
+  <Tooltip
+    label={moodEmojis[Math.floor(mood / 20)]}
+    isOpen={showTooltip}
+    placement="top"
+  >
+    <Slider
+      defaultValue={50}
+      min={0}
+      max={100}
+      step={1}
+      onChange={(val) => setMood(val)}
+      onChangeStart={() => setShowTooltip(true)}
+      onChangeEnd={() => setShowTooltip(false)}
+      width="100%" // Full width on mobile
+      sx={{
+        ".chakra-slider__track": {
+          background: moodGradient,
+          height: "8px",
+        },
+        ".chakra-slider__thumb": {
+          bg: "white",
+          borderColor: "gray.300",
+        },
+      }}
+    >
+      <SliderTrack>
+        <SliderFilledTrack bg="transparent" />
+      </SliderTrack>
+      <SliderThumb boxSize={6} />
+    </Slider>
+  </Tooltip>
+  <Flex mt={4} alignItems="center" width="100%">
+    <IconButton
+      icon={<AttachmentIcon />}
+      onClick={() => fileInputRef.current.click()}
+      mr={2}
+    />
+    <input
+      type="file"
+      ref={fileInputRef}
+      hidden
+      onChange={handleMediaSend}
+    />
+    <Input
+      placeholder="Type your message here..."
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      onKeyPress={(event) => (event.key === "Enter" ? sendMessage() : null)}
+      flexGrow={1}
+    />
+    <Button ml={2} colorScheme="pink" onClick={sendMessage}>
+      Send
+    </Button>
+  </Flex>
+</Flex>
+
     </Flex>
   );
 };
