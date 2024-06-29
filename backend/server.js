@@ -1,32 +1,30 @@
-const express = require('express');
-const { MongoClient } = require('mongodb');
-const cors = require('cors');
-require('dotenv').config();
+import express from "express";
+import { config } from "dotenv";
+import mongoose from "mongoose";
+import router from "./routes/index.js";
+import cors from 'cors'
+config();
 
 const app = express();
-const port = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
+app
+  .use(cors())
+  .use(express.json({ limit: "50kb" }))
+  .use(express.urlencoded({ extended: true, limit: "50kb" }))
+  .use(router);
 
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-
-  app.get('/api/data', async (req, res) => {
-    const data = await collection.find({}).toArray();
-    res.json(data);
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    console.log("Connected to MongoDB");
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running on port ${process.env.PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.log("Error: ", error.message);
   });
 
-  app.post('/api/data', async (req, res) => {
-    const newData = req.body;
-    await collection.insertOne(newData);
-    res.json(newData);
-  });
-
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
-});
+// app.listen(process.env.PORT, () => {
+//   console.log(`Server is running on port ${process.env.PORT}`);
+// });

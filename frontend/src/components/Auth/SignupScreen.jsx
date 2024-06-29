@@ -1,9 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Flex, Input, Button, Text, VStack, Select } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
-const SignupScreen = ({ switchToLogin }) => {
+
+const SignupScreen = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [gender, setGender] = useState('');
+  const [profileImage, setProfileImage] = useState('');
   const [themeColor, setThemeColor] = useState('pink');
-  const [roomName, setRoomName] = useState('');
+  const [inviteToken, setInviteToken] = useState('');
+  const base_api_url = import.meta.env.VITE_BASE_API_URL
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('inviteToken');
+    if (token) {
+      setInviteToken(token);
+      console.log(token)
+    }
+  }, []);
+
+  const handleSignup = async () => {
+    const response = await fetch(`${base_api_url}/auth/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, email, password, phone, gender:gender.toLowerCase(), profileImage, themeColor, inviteToken }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      window.alert("SignUp successful")
+      // Handle successful signup, e.g., redirect to login or chat page
+    } else {
+      // Handle signup error
+      window.alert("SignUp failed")
+    }
+  };
 
   return (
     <Flex
@@ -40,20 +78,26 @@ const SignupScreen = ({ switchToLogin }) => {
           Sign Up
         </Text>
         <VStack spacing={4}>
-          <Input placeholder="Username" />
-          <Input placeholder="Email" type="email" />
-          <Input placeholder="Password" type="password" />
+          <Input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <Select placeholder="Select gender" value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="prefer_not_to_say">Prefer not to say</option>
+          </Select>
+          <Input placeholder="Profile Image URL" value={profileImage} onChange={(e) => setProfileImage(e.target.value)} />
           <Select placeholder="Select theme color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)}>
             <option value="pink">Pink</option>
             <option value="blue">Blue</option>
             <option value="green">Green</option>
             <option value="purple">Purple</option>
           </Select>
-          <Input placeholder="Room Name" value={roomName} onChange={(e) => setRoomName(e.target.value)} />
-          <Button colorScheme="pink" width="100%">
+          <Button colorScheme="pink" width="100%" onClick={handleSignup}>
             Sign Up
           </Button>
-          <Button variant="link" colorScheme="pink" onClick={switchToLogin}>
+          <Button variant="link" colorScheme="pink" onClick={() => navigate('/login')}>
             Already have an account? Login
           </Button>
         </VStack>
