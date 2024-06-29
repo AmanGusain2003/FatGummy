@@ -5,6 +5,7 @@ import router from './routes/index.js';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import http from 'http';
+import { saveMessage } from './controllers/message.controller.js';
 
 // dev
 import morgan from 'morgan';
@@ -47,7 +48,8 @@ mongoose
 
       socket.on('sendMessage', ({ roomId, messageWithMood }) => {
         io.to(roomId).emit('receiveMessage', messageWithMood);
-        console.log(messageWithMood)
+        // console.log(messageWithMood)
+        saveMessage(messageWithMood)
         console.log(`message sent to room id: ${roomId}`);
       });
 

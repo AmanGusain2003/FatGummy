@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import {
   Box,
   Flex,
@@ -12,7 +12,7 @@ import {
   SliderThumb,
   Tooltip,
   Text,
-  useBreakpointValue,
+  // useBreakpointValue,
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
 import { UserContext } from '../UserContext';
@@ -30,6 +30,7 @@ const ChatInterface = () => {
   const socketRef = useRef(null);
   // const base_api_url = import.meta.env.VITE_BASE_API_URL
   const baseSocketUrlRef = import.meta.env.VITE_BASE_SOCKET_URL
+  const baseApiUrlRef = import.meta.env.VITE_BASE_API_URL
 
 
   const moodColors = ["#880808", "#ED8936", "#ECC94B", "#48BB78", "#38B2AC"]; // Colors for each mood
@@ -38,6 +39,20 @@ const ChatInterface = () => {
   const moodGradient = `linear-gradient(90deg, ${moodColors.join(", ")})`;
 
   useEffect(() => {
+    const fetchPastMessages = async () => {
+      try {
+        const response = await fetch(
+          `${baseApiUrlRef}/chat/pastMessages?userId=${user._id}&partnerId=${user.partnerId}`
+        );
+        const data = await response.json();
+        setMessages(data.messages);
+      } catch (error) {
+        console.error("Failed to fetch past messages", error);
+      }
+    };
+
+    fetchPastMessages();
+
     socketRef.current = io.connect(baseSocketUrlRef);
 
     socketRef.current.on("connect", () => {
@@ -99,7 +114,7 @@ const ChatInterface = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sliderPosition = useBreakpointValue({ base: "column", md: "row" });
+  // const sliderPosition = useBreakpointValue({ base: "column", md: "row" });
 
   return (
     <Flex
