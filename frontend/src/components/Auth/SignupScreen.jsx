@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Box, Flex, Input, Button, Text, VStack, Select } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../UserContext';
 
 
 const SignupScreen = () => {
@@ -12,7 +13,8 @@ const SignupScreen = () => {
   const [profileImage, setProfileImage] = useState('');
   const [themeColor, setThemeColor] = useState('pink');
   const [inviteToken, setInviteToken] = useState('');
-  const base_api_url = import.meta.env.VITE_BASE_API_URL
+  const { setUser } = useContext(UserContext);
+  const base_api_url = useRef(import.meta.env.VITE_BASE_API_URL)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -36,6 +38,8 @@ const SignupScreen = () => {
     if (response.ok) {
       const data = await response.json();
       window.alert("SignUp successful")
+      setUser(data.user);
+      navigate("/chat")
       // Handle successful signup, e.g., redirect to login or chat page
     } else {
       // Handle signup error
