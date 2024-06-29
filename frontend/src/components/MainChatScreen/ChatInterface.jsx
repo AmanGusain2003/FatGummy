@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   Box,
   Flex,
@@ -14,10 +14,13 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
+
+import { UserContext } from '../UserContext';
 import { AttachmentIcon } from "@chakra-ui/icons";
 import Message from "../MessageCard/Message"; // Ensure correct import path
 
 const ChatInterface = () => {
+  const { user } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [mood, setMood] = useState(50);
@@ -41,6 +44,7 @@ const ChatInterface = () => {
         { text: messageWithMood, sender: "You", color, emoji },
       ]);
       setInput("");
+      console.log(`message sent to partner id: ${user.partnerId}`)
     }
   };
 

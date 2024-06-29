@@ -1,12 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import { Box, Flex, Input, Button, Text, VStack } from '@chakra-ui/react';
 import {useNavigate} from 'react-router-dom'
+import { UserContext } from '../UserContext';
+
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setUser } = useContext(UserContext);
   const base_api_url = import.meta.env.VITE_BASE_API_URL
+  const navigate = useNavigate()
+
 
   const handleLogin = async () => {
     const response = await fetch(`${base_api_url}/auth/login`, {
@@ -20,6 +25,8 @@ const LoginScreen = () => {
     if (response.ok) {
       const data = await response.json();
       window.alert("Login successful")
+      setUser(data.user);
+      navigate("/chat")
       // Handle successful signup, e.g., redirect to login or chat page
     } else {
       // Handle signup error
@@ -27,7 +34,6 @@ const LoginScreen = () => {
     }
   };
 
-  const navigate = useNavigate()
   return (
     <Flex
       flexDirection="column"

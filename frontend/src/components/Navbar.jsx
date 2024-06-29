@@ -1,9 +1,12 @@
 // import React from 'react';
 import { Flex, Box, Link, Button, useColorModeValue, IconButton, useDisclosure, Stack } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import {useNavigate} from 'react-router-dom'
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate()
+
 
   return (
     <Flex
@@ -49,7 +52,7 @@ const Navbar = () => {
           fontSize={'sm'}
           fontWeight={400}
           variant={'link'}
-          href={'#'}>
+          href={'/login'}>
           Sign In
         </Button>
         <Button
@@ -58,7 +61,7 @@ const Navbar = () => {
           fontWeight={600}
           color={'white'}
           bg={'pink.400'}
-          href={'#'}
+          href={'/signup'}
           _hover={{
             bg: 'pink.300',
           }}>
