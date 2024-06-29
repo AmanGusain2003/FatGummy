@@ -1,12 +1,18 @@
-// import React from 'react';
-import { Flex, Box, Link, Button, useColorModeValue, IconButton, useDisclosure, Stack } from '@chakra-ui/react';
+import React, { useContext } from 'react';
+import { Flex, Box, Link, Button, useColorModeValue, IconButton, useDisclosure, Stack, Text } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from './UserContext';
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { user, logout } = useContext(UserContext);
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <Flex
@@ -47,26 +53,47 @@ const Navbar = () => {
         justify={'flex-end'}
         direction={'row'}
         spacing={6}>
-        <Button
-          as={'a'}
-          fontSize={'sm'}
-          fontWeight={400}
-          variant={'link'}
-          href={'/login'}>
-          Sign In
-        </Button>
-        <Button
-          display={{ base: 'none', md: 'inline-flex' }}
-          fontSize={'sm'}
-          fontWeight={600}
-          color={'white'}
-          bg={'pink.400'}
-          href={'/signup'}
-          _hover={{
-            bg: 'pink.300',
-          }}>
-          Sign Up
-        </Button>
+        {user ? (
+          <>
+            <Box display={{ base: 'none', md: 'flex' }} alignItems="center">
+              <Text fontSize={'sm'} mr={4}>Hello, {user.username}</Text>
+              <Button
+                fontSize={'sm'}
+                fontWeight={600}
+                color={'white'}
+                bg={'pink.400'}
+                onClick={handleLogout}
+                _hover={{
+                  bg: 'pink.300',
+                }}>
+                Logout
+              </Button>
+            </Box>
+          </>
+        ) : (
+          <>
+            <Button
+              as={'a'}
+              fontSize={'sm'}
+              fontWeight={400}
+              variant={'link'}
+              href={'/login'}>
+              Sign In
+            </Button>
+            <Button
+              display={{ base: 'none', md: 'inline-flex' }}
+              fontSize={'sm'}
+              fontWeight={600}
+              color={'white'}
+              bg={'pink.400'}
+              href={'/signup'}
+              _hover={{
+                bg: 'pink.300',
+              }}>
+              Sign Up
+            </Button>
+          </>
+        )}
       </Stack>
     </Flex>
   );
