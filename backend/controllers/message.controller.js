@@ -18,7 +18,7 @@ const saveMessage = (messageWithMood) => {
   newMessage
     .save()
     .then((savedMessage) => {
-      console.log("Message saved:", savedMessage);
+      // console.log("Message saved:", savedMessage);
     })
     .catch((error) => {
       console.error("Error saving message:", error);
