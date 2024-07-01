@@ -1,12 +1,13 @@
 import React from 'react';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ChatInterface from './components/MainChatScreen/ChatInterface';
-import LoginScreen from './components/Auth/LoginScreen.jsx';
-import SignupScreen from './components/Auth/SignupScreen.jsx';
-import { UserProvider } from './components/UserContext.jsx';
-import PrivateRoute from './components/PrivateRoute.jsx';
+import LoginScreen from './components/Auth/LoginScreen';
+import SignupScreen from './components/Auth/SignupScreen';
+import InviteScreen from './components/InviteScreen/InviteScreen';
+import { UserProvider } from './components/UserContext';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -16,14 +17,14 @@ function App() {
           <Flex direction="column" h="100vh">
             <Navbar />
             <Routes>
-              <Route path="/" element={<PrivateRoute redirectTo="/login" />}>
-                <Route path="/" element={<ChatInterface />} />
-              </Route>
               <Route path="/login" element={<LoginScreen />} />
               <Route path="/signup" element={<SignupScreen />} />
-              <Route path="/chat" element={<PrivateRoute redirectTo="/login" />}>
+              <Route path="/" element={<PrivateRoute />}>
+                <Route path="/invite" element={<InviteScreen />} />
                 <Route path="/chat" element={<ChatInterface />} />
+                <Route index element={<Navigate to="/chat" />} />
               </Route>
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Flex>
         </Router>

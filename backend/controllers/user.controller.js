@@ -72,4 +72,18 @@ const signup = async (req, res) => {
   }
 };
 
-export { login, signup };
+const getPartnerId = async (req, res) => {
+  try {
+    // const userId = req.user._id;
+    const {userId} = req.query
+    const user = await User.findById(userId).select('partnerId');
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    return res.status(200).json({ partnerId: user.partnerId });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export { login, signup, getPartnerId };

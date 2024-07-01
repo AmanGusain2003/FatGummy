@@ -1,15 +1,30 @@
-import { useContext } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { UserContext } from './UserContext';
 
-const PrivateRoute = ({ redirectTo }) => {
+const PrivateRoute = () => {
   const { user, loading } = useContext(UserContext);
+  const location = useLocation();
 
   if (loading) {
-    return <div>Loading...</div>; // Or a loading spinner
+    return <div>Loading...</div>; // Show a loading spinner or message
   }
 
-  return user ? <Outlet /> : <Navigate to={redirectTo} />;
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // Allow access to /invite if the user is authenticated but has no partnerId
+  if (location.pathname === '/invite') {
+    return <Outlet />;
+  }
+
+  // Redirect to /invite if user does not have a partnerId
+  if (!user.partnerId) {
+    return <Navigate to="/invite" />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;

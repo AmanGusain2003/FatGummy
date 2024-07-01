@@ -14,7 +14,7 @@ const SignupScreen = () => {
   const [themeColor, setThemeColor] = useState('pink');
   const [inviteToken, setInviteToken] = useState('');
   const { setUser } = useContext(UserContext);
-  const base_api_url = useRef(import.meta.env.VITE_BASE_API_URL)
+  const base_api_url = import.meta.env.VITE_BASE_API_URL
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -37,13 +37,15 @@ const SignupScreen = () => {
 
     if (response.ok) {
       const data = await response.json();
-      window.alert("SignUp successful")
+      window.alert("SignUp successful");
       setUser(data.user);
-      navigate("/chat")
-      // Handle successful signup, e.g., redirect to login or chat page
+      if (!data.user.partnerId) {
+        navigate("/invite");
+      } else {
+        navigate("/chat");
+      }
     } else {
-      // Handle signup error
-      window.alert("SignUp failed")
+      window.alert("SignUp failed");
     }
   };
 
