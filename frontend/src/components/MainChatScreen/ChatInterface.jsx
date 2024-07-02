@@ -15,9 +15,9 @@ import {
   // useBreakpointValue,
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
-import { UserContext } from '../UserContext';
+import { UserContext } from "../UserContext";
 import Message from "../MessageCard/Message"; // Ensure correct import path
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 
 const ChatInterface = () => {
   const { user } = useContext(UserContext);
@@ -29,9 +29,8 @@ const ChatInterface = () => {
   const fileInputRef = useRef(null);
   const socketRef = useRef(null);
   // const base_api_url = import.meta.env.VITE_BASE_API_URL
-  const baseSocketUrlRef = import.meta.env.VITE_BASE_SOCKET_URL
-  const baseApiUrlRef = import.meta.env.VITE_BASE_API_URL
-
+  const baseSocketUrlRef = import.meta.env.VITE_BASE_SOCKET_URL;
+  const baseApiUrlRef = import.meta.env.VITE_BASE_API_URL;
 
   const moodColors = ["#880808", "#ED8936", "#ECC94B", "#48BB78", "#38B2AC"]; // Colors for each mood
   const moodEmojis = ["😡", "😟", "😐", "😊", "😄"];
@@ -57,11 +56,11 @@ const ChatInterface = () => {
 
     socketRef.current.on("connect", () => {
       console.log(`Connected with socket ID: ${socketRef.current.id}`);
-      socketRef.current.emit('joinRoom', { roomId: user._id });
+      socketRef.current.emit("joinRoom", { roomId: user._id });
     });
 
-    socketRef.current.on('receiveMessage', (message) => {
-      console.log(message)
+    socketRef.current.on("receiveMessage", (message) => {
+      console.log(message);
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
@@ -75,18 +74,18 @@ const ChatInterface = () => {
       const moodIndex = Math.floor(mood / 20); // Dividing by 20 to map the slider value (0-100) to mood array index (0-4)
       const color = moodColors[moodIndex];
       const emoji = moodEmojis[moodIndex];
-      const roomId = user.partnerId
+      const roomId = user.partnerId;
       const messageWithMood = {
         text: input,
         sender: user._id,
         color,
         emoji,
-        roomId
+        roomId,
       };
-      console.log(roomId, messageWithMood)
-      socketRef.current.emit('sendMessage', {roomId, messageWithMood});
+      console.log(roomId, messageWithMood);
+      socketRef.current.emit("sendMessage", { roomId, messageWithMood });
       setMessages([...messages, messageWithMood]);
-      setInput('');
+      setInput("");
     }
   };
 
@@ -101,9 +100,9 @@ const ChatInterface = () => {
           sender: user._id,
           color: "#48BB78",
           emoji: "😊",
-          roomId: user.roomId
+          roomId: user.roomId,
         };
-        socketRef.current.emit('sendMessage', messageWithMedia);
+        socketRef.current.emit("sendMessage", messageWithMedia);
         setMessages([...messages, messageWithMedia]);
       };
       reader.readAsDataURL(file);
@@ -155,11 +154,24 @@ const ChatInterface = () => {
       <Flex mt={4} alignItems="center" zIndex="1" direction="column">
         <Flex justify="space-between" width="100%">
           {moodEmojis.map((emoji, index) => (
-            <Box key={index} textAlign="center" width="20%">
-              <Text>{emoji}</Text>
+            <Box
+              key={index}
+              textAlign="center"
+              width="20%"
+              position="relative"
+              zIndex={Math.floor(mood / 20) === index ? 1 : 0}
+              transform={
+                Math.floor(mood / 20) === index ? "scale(1.5)" : "scale(1)"
+              }
+              transition="transform 0.2s, zIndex 0.2s"
+            >
+              <Text fontSize={Math.floor(mood / 20) === index ? "3xl" : "xl"}>
+                {emoji}
+              </Text>
             </Box>
           ))}
         </Flex>
+
         <Tooltip
           label={moodEmojis[Math.floor(mood / 20)]}
           isOpen={showTooltip}
@@ -207,7 +219,9 @@ const ChatInterface = () => {
             placeholder="Type your message here..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(event) => (event.key === "Enter" ? sendMessage() : null)}
+            onKeyPress={(event) =>
+              event.key === "Enter" ? sendMessage() : null
+            }
             flexGrow={1}
           />
           <Button ml={2} colorScheme="pink" onClick={sendMessage}>
